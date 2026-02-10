@@ -1,88 +1,68 @@
-// GANTI DENGAN URL WEB APP ANDA DARI GOOGLE APPS SCRIPT
-const API_URL = "https://script.google.com/macros/s/AKfycby7RIMLebAkTSZBEWag4SabGJYnTa5ZTZzfn9es4CHSEj5ctNhPsrsXZqILhy_gVKuKDw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7RIMLebAkTSZBEWag4SabGJYnTa5ZTZzfn9es4CHSEj5ctNhPsrsXZqILhy_gVKuKDw/exec"; // Tempel URL dari Apps Script
 
-function showPage(page) {
-    const content = document.getElementById('content');
-    content.innerHTML = ''; // Reset konten
-
-    if (page === 'beranda') {
-        const temp = document.getElementById('temp-beranda');
-        content.appendChild(temp.content.cloneNode(true));
-    } 
-    else if (page === 'titipan' || page === 'kehilangan') {
-        renderTabel(page);
-    }
-    else if (page === 'lapor') {
-        const temp = document.getElementById('temp-lapor');
-        content.appendChild(temp.content.cloneNode(true));
-        handleFormSubmit();
-    }
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    document.getElementById(pageId).style.display = 'block';
 }
 
-async function renderTabel(jenis) {
-    const content = document.getElementById('content');
-    const temp = document.getElementById('temp-tabel');
-    content.appendChild(temp.content.cloneNode(true));
-    
-    document.getElementById('table-title').innerText = `Data Barang ${jenis.charAt(0).toUpperCase() + jenis.slice(1)}`;
-    
-    // Tampilkan Loading
-    const tbody = document.getElementById('table-body');
-    tbody.innerHTML = '<tr><td colspan="6">Memuat data...</td></tr>';
+async function loadData(type) {
+    showPage('data-view');
+    document.getElementById('table-title').innerText = "Data Barang " + type;
+    const tbody = document.getElementById('tableBody');
+    const thead = document.getElementById('tableHead');
+    tbody.innerHTML = "<tr><td colspan='5'>Memuat data...</td></tr>";
 
     try {
-        const response = await fetch(`${API_URL}?jenis=${jenis === 'titipan' ? 'Titipan' : 'Kehilangan'}`);
+        const response = await fetch(`${SCRIPT_URL}?sheet=${type}`);
         const data = await response.json();
         
-        tbody.innerHTML = '';
-        data.forEach(row => {
-            const tr = document.createElement('tr');
-            row.forEach(cell => {
-                const td = document.createElement('td');
-                td.innerText = cell;
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-    } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6">Gagal memuat data.</td></tr>';
+        // Render Header & Body
+        if (data.length > 0) {
+            thead.innerHTML = Object.keys(data[0]).map(k => `<th>${k}</th>`).join('');
+            tbody.innerHTML = data.map(row => 
+                `<tr>${Object.values(row).map(v => `<td>${v}</td>`).join('')}</tr>`
+            ).join('');
+        }
+    } catch (e) {
+        tbody.innerHTML = "Gagal mengambil data.";
     }
 }
 
-function handleFormSubmit() {
-    const form = document.getElementById('form-lapor');
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = form.querySelector('button');
-        btn.disabled = true;
-        btn.innerText = "Mengirim...";
+document.getElementById('reportForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.innerText = "Mengirim...";
+    btn.disabled = true;
 
-        const payload = {
-            jenis: document.getElementById('jenis').value,
-            values: [
-                document.getElementById('nama_barang').value,
-                document.getElementById('detail').value,
-                new Date().toLocaleDateString('id-ID'),
-                document.getElementById('pelapor').value,
-                document.getElementById('lokasi').value,
-                "Pending"
-            ]
-        };
+    const payload = [
+        document.getElementById('nama_barang').value,
+        document.getElementById('detail').value,
+        new Date().toLocaleDateString('id-ID'),
+        document.getElementById('pelapor').value,
+        document.getElementById('lokasi').value,
+        "Aktif"
+    ];
 
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            alert("Laporan berhasil terkirim!");
-            form.reset();
-        } catch (err) {
-            alert("Terjadi kesalahan saat mengirim.");
-        }
-        btn.disabled = false;
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ jenis: document.getElementById('jenis').value, payload: payload })
+        });
+        alert("Laporan berhasil terkirim!");
+        e.target.reset();
+        showPage('beranda');
+    } catch (e) {
+        alert("Terjadi kesalahan.");
+    } finally {
         btn.innerText = "Kirim Laporan";
-    };
-}
+        btn.disabled = false;
+    }
+});
 
-// Jalankan beranda saat pertama kali buka
-showPage('beranda');
+function searchTable() {
+    let input = document.getElementById("searchInput").value.toUpperCase();
+    let rows = document.getElementById("tableBody").getElementsByTagName("tr");
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.display = rows[i].innerText.toUpperCase().includes(input) ? "" : "none";
+    }
+}
