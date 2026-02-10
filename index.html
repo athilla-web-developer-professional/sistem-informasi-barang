@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Barang SMAN 1 Magetan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">SMAN 1 Magetan</div>
+        <ul>
+            <li><a href="#" onclick="showPage('beranda')">Beranda</a></li>
+            <li><a href="#" onclick="showPage('titipan')">Barang Titipan</a></li>
+            <li><a href="#" onclick="showPage('kehilangan')">Barang Kehilangan</a></li>
+            <li><a href="#" onclick="showPage('lapor')">Form Lapor</a></li>
+        </ul>
+    </nav>
+
+    <main id="content">
+        </main>
+
+    <template id="temp-beranda">
+        <section class="hero">
+            <h1>Selamat Datang di SIBATA</h1>
+            <p>Sistem Informasi Barang Titipan dan Kehilangan SMAN 1 Magetan.</p>
+        </section>
+    </template>
+
+    <template id="temp-tabel">
+        <div class="container">
+            <h2 id="table-title">Data Barang</h2>
+            <input type="text" id="search" placeholder="Cari barang..." onkeyup="filterTable()">
+            <table id="data-table">
+                <thead><tr id="table-head"></tr></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="temp-lapor">
+        <div class="container">
+            <h2>Form Laporan Barang</h2>
+            <form id="form-lapor">
+                <label>Jenis Laporan:</label>
+                <select id="jenis" required>
+                    <option value="Titipan">Penitipan Barang</option>
+                    <option value="Kehilangan">Kehilangan Barang</option>
+                </select>
+                <input type="text" id="nama_barang" placeholder="Nama Barang" required>
+                <textarea id="detail" placeholder="Deskripsi / Ciri-ciri" required></textarea>
+                <input type="text" id="lokasi" placeholder="Lokasi (Penyimpanan/Kehilangan)" required>
+                <input type="text" id="pelapor" placeholder="Nama Anda" required>
+                <button type="submit">Kirim Laporan</button>
+            </form>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
