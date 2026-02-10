@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Barang SMAN 1 Magetan</title>
+    <title>Sistem Informasi Barang SMAN 1 Magetan</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,50 +11,45 @@
         <div class="logo">SMAN 1 Magetan</div>
         <ul>
             <li><a href="#" onclick="showPage('beranda')">Beranda</a></li>
-            <li><a href="#" onclick="showPage('titipan')">Barang Titipan</a></li>
-            <li><a href="#" onclick="showPage('kehilangan')">Barang Kehilangan</a></li>
-            <li><a href="#" onclick="showPage('lapor')">Form Lapor</a></li>
+            <li><a href="#" onclick="loadData('Titipan')">Barang Titipan</a></li>
+            <li><a href="#" onclick="loadData('Kehilangan')">Barang Kehilangan</a></li>
+            <li><a href="#" onclick="showPage('form')">Form Lapor</a></li>
         </ul>
     </nav>
 
     <main id="content">
-        </main>
-
-    <template id="temp-beranda">
-        <section class="hero">
-            <h1>Selamat Datang di SIBATA</h1>
-            <p>Sistem Informasi Barang Titipan dan Kehilangan SMAN 1 Magetan.</p>
+        <section id="beranda" class="page">
+            <h1>Selamat Datang di SIBER SMANSA</h1>
+            <p>Sistem Informasi Barang Titipan dan Barang Kehilangan SMAN 1 Magetan. Silakan pilih menu untuk melihat data atau melaporkan barang.</p>
         </section>
-    </template>
 
-    <template id="temp-tabel">
-        <div class="container">
+        <section id="data-view" class="page" style="display:none">
             <h2 id="table-title">Data Barang</h2>
-            <input type="text" id="search" placeholder="Cari barang..." onkeyup="filterTable()">
-            <table id="data-table">
-                <thead><tr id="table-head"></tr></thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-    </template>
+            <input type="text" id="searchInput" placeholder="Cari barang..." onkeyup="searchTable()">
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead><tr id="tableHead"></tr></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </section>
 
-    <template id="temp-lapor">
-        <div class="container">
+        <section id="form" class="page" style="display:none">
             <h2>Form Laporan Barang</h2>
-            <form id="form-lapor">
+            <form id="reportForm">
                 <label>Jenis Laporan:</label>
                 <select id="jenis" required>
-                    <option value="Titipan">Penitipan Barang</option>
-                    <option value="Kehilangan">Kehilangan Barang</option>
+                    <option value="Titipan">Barang Titipan</option>
+                    <option value="Kehilangan">Barang Kehilangan</option>
                 </select>
                 <input type="text" id="nama_barang" placeholder="Nama Barang" required>
                 <textarea id="detail" placeholder="Deskripsi / Ciri-ciri" required></textarea>
-                <input type="text" id="lokasi" placeholder="Lokasi (Penyimpanan/Kehilangan)" required>
                 <input type="text" id="pelapor" placeholder="Nama Anda" required>
+                <input type="text" id="lokasi" placeholder="Lokasi (Penyimpanan/Kehilangan)" required>
                 <button type="submit">Kirim Laporan</button>
             </form>
-        </div>
-    </template>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
